@@ -1,5 +1,6 @@
 ---
 published: true
+layout: post
 ---
 ## Passwords & 2FA Codes
 
