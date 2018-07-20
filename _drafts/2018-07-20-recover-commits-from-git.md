@@ -1,6 +1,7 @@
 ---
 published: false
 layout: post
+title: Recover commits from git
 ---
 ## Recover commits from git
 
