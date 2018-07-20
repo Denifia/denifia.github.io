@@ -17,4 +17,17 @@ I thought I branched from the wrong starting point and was trying to correct tha
 
 Bugger!
 
-With some help from my colleagues and 
+With some help from my colleagues and some quick google searches I found the `git reflog` command. It shows the history of what you've done to your branch including resets. It only took a few seconds to find the SHA1 just before everything went wong.
+
+Action Plan:
+* backup currently busted branch
+* hard reset back to identified SHA1
+* force push to origin
+* switch to backup branch
+* soft reset commit A
+* stash commit A
+* switch to correct branch
+* stash pop commit A
+* profit?
+
+All told it took me longer to write this post than it did to fix my mistake and my Friday afternoon wasn't doomed; that made me smile.
