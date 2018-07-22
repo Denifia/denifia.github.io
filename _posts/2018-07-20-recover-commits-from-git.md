@@ -3,8 +3,6 @@ published: true
 layout: post
 title: Recover commits from git
 ---
-## Recover commits from git
-
 Today I made a mistake. 
 
 I was preparing a PR and told git to:
