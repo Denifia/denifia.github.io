@@ -1,5 +1,6 @@
 ---
 published: false
+title: Digital Security
 layout: post
 ---
 Protecting one's digital life is hard but I've taken a few decent steps towards securing mine.
