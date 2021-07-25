@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: Digital Security
 layout: post
 ---
