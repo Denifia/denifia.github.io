@@ -14,113 +14,109 @@ layout: resume-default
 <div id="contact" class="contact">
     {% for item in site.data.resume.contact %}
     <div class="contact-item">
-    {% if item.link %}
-    <a href="{{ item.link }}">
-    {% endif %}
-    <i class="fa {{ item.icon }} aria-hidden="true></i> {{ item.text }}
-    {% if item.link %}
-    </a>
-    {% endif %}
+        {% if item.link %}<a href="{{ item.link }}">{% endif %}
+        <i class="fa {{ item.icon }} aria-hidden="true></i> {{ item.text }}
+        {% if item.link %}</a>{% endif %}
     </div>
     {% endfor %}
 </div>
 </header>
 
-<section id="education">
-<div class="section-title">
-    Education
-</div>
-<div class="section-content">
-    {% for edu in site.data.resume.education %}
-    <div class="block">
-    <div class="block-title">
-        {{ edu.university }}
+<section id="intro">
+    <div class="section-title">
+        Intro
     </div>
-    <div class="block-subtitle">
-        {{ edu.duration }} | {{ edu.location }}
+    <div class="section-content">
+        
+        {% for info in site.data.resume.info %}
+        <div class="block">
+            <div class="block-title">
+                {{ info.title }}
+            </div>
+            <div class="block-content">
+                {% for p in info.paragraphs %}
+                    <p>{{ p }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <div class="block-content">
-        {{ edu.major }}
-    </div>
-    </div>
-    {% endfor %}
-</div>
 </section>
 
 <section id="skills">
-<div class="section-title">
-    Skills
-</div>
-<div class="section-content">
-    {% for skill in site.data.resume.skills %}
-    <div class="block">
-    <div class="block-title">
-        {{ skill.title }}
+    <div class="section-title">
+        Skills
     </div>
-    <div class="block-content">
-        {{ skill.items }}
+    <div class="section-content">
+        {% for skill in site.data.resume.skills %}
+        <div class="block">
+            <div class="block-title">
+                {{ skill.title }}
+            </div>
+            <div class="block-content">
+                {{ skill.items }}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    </div>
-    {% endfor %}
-</div>
-</section>
-
-<section id="experience">
-<div class="section-title">
-    Experience
-</div>
-<div class="section-content">
-    {% for exp in site.data.resume.experience %}
-    <div class="block">
-    <div class="block-title">
-        {{ exp.title }}
-    </div>
-    <div class="block-subtitle">
-        {{ exp.duration }} | {{ exp.company }}
-    </div>
-    <div class="block-content">
-        {{ exp.description }}
-    </div>
-    </div>
-    {% endfor %}
-</div>
 </section>
 
 <section id="projects">
-<div class="section-title">
-    Projects
-</div>
-<div class="section-content">
-    {% for project in site.data.resume.projects %}
-    <div class="block">
-    <div class="block-title">
-        {{ project.name }}
+    <div class="section-title">
+        Notable Projects
     </div>
-    <div class="block-subtitle">
-        {{ project.contribution }}
+    <div class="section-content">
+        {% for project in site.data.resume.projects %}
+        <div class="block">
+            <div class="block-title">
+                {{ project.name }}
+            </div>
+            <div class="block-subtitle">
+                {{ project.contribution }} | {{ project.for }}
+            </div>
+            <div class="block-content">
+                {{ project.description }}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <div class="block-content">
-        {{ project.description }}
+</section>
+
+<section id="roles">
+    <div class="section-title">
+        Roles
     </div>
+    <div class="section-content">
+        {% for role in site.data.resume.roles %}
+        <div class="block">
+            <div class="block-title">
+                {{ role.title }}
+            </div>
+            <div class="block-subtitle">
+                {{ role.duration }} | {{ role.company }}
+            </div>
+            <div class="block-content">
+                {{ role.description }}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 </section>
 
 <section id="languages">
-<div class="section-title">
-    Languages
-</div>
-<div class="section-content section-flex">
-    {% for language in site.data.resume.languages %}
-    <div class="block block-square">
-    <div class="block-title">
-        {{ language.name }}
+    <div class="section-title">
+        Languages
     </div>
-    <div class="block-content">
-        {{ language.proficiency }}
+    <div class="section-content section-flex">
+        {% for language in site.data.resume.languages %}
+        <div class="block block-square">
+            <div class="block-title">
+                {{ language.name }}
+            </div>
+            <div class="block-content">
+                {{ language.proficiency }}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    </div>
-    {% endfor %}
-</div>
 </section>

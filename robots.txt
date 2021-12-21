@@ -1,2 +1,4 @@
 User-agent: *
 Disallow: /static/
+Disallow: /resume
+Disallow: /resume.html

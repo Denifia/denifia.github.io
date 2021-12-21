@@ -10,43 +10,140 @@ contact:
   - icon: fa-github
     text: Denifia
     link: https://github.com/denifia
-education:
-  - university: Martin College
-    location: Australia
-    major: Diploma of Information Technology
-  - university: Your Second University
-    duration: Aug 2007 - Jun 2011
-    location: Ut enim ad minim veniam
-    major: Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat
+info:
+  - title: Looking Forward
+    paragraphs:
+      - Luke is always seeking challenging, meaningful work that can satisfy this endless curiosity and need to know how things work.
+      - With this emergence of cryptocurrency and it's related plethora of technologies, he is keen to get his hands dirty with Web3 and what it has to offer.
+  - title: Current
+    paragraphs:
+      - Luke is a Solutions Architect for Cash Converters. His current responsibility include designing new systems, implementation, deployment to production followed by monitoring and maintenance.
+      - Some of his focuses of late have been reducing cloud cost while increasing performance, migrating .net 4.7 - .net 5 application to .net 6, and integrating core business applications with 3rd party systems.
+      - Working remotely 32 hours a week provides him a great work-life balance so he can spend time with his growing family.
+  - title: Background
+    paragraphs: 
+      - Starting his career in second hand computers, he moved into networking (both installation and configuration) then onto application support.
+      - In 2007 Luke moved into software development and quickly moved from strength to strength culminating to a Team Lead position overseeing a team of 10 software developers.
+      - Up until this point Luke has primarily been a consultant which exposed him to a large variety of technology, industries and teams.
+      - Finally, Luke pivoted his career away from consulting and management to move back onto the tools as an in-house Solutions Architect.
 skills:
-  - title: Skill Group 1
-    items: Lorem, Ipsum, Dolor, Sit, Amet
-  - title: Skill Group 2
-    items: Consectetur, Adipiscing, Elit
-  - title: Skill Group 3
-    items: Sed do, Eiusmod, Tempor, Incididunt
-experience:
-  - title: Job Title 1
-    duration: Apr 2016 - Now
-    company: Your 1st, Inc.
-    description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-  - title: Job Title 2
-    duration: Apr 2013 - Mar 2016
-    company: Your 2nd, Inc.
-    description: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-  - title: Job Title 3
-    duration: Dec 2011 - Mar 2012
-    company: Your 3rd Co, Ltd.
-    description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  - title: Programming & Tools - Proficient
+    items: Microsoft .Net 4 to 6, Microsoft Azure, JavaScript, SQL, Git, Visual Studio, Docker
+  - title: Programming & Tools
+    items: Microsoft .Net 1.1 to 4, Vue, React, TypeScript, CSS, SASS, Python, Linux, XAML
+  - title: Business & Design
+    items: Solutions Architect, Agile, Team Lead, Mentor, Systems Analysis, Service Delivery Management, Application Lifecycle Management
+  - title: Industry
+    items: Finance, Education, Health, Resources, Government
+  - title: Hobbies
+    items: Gaming, Cryptocurrency Technology, Leather Working, Electronics / Microcontrollers, Home Automation, Knife Sharpening, Baking Bread
 projects:
-  - name: Project Name 1
-    description: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    contribution: Contributor.
-  - name: Project Name 2
-    description: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    contribution: Creator and maintainer.
+  - name: Integrate 3rd Party Communications Platform
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: Integrate 3rd Party Collections System
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: White-label Assessment Platform
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: Integrate New Payments Platform
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: Universal Barcode Lookup System
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: Azure App Services Migration
+    for: Cash Converters
+    description: 
+    contribution: design, contribute
+  - name: Staff Scheduling Platform
+    for: Roy Hill
+    description: 
+    contribution: contribute
+  - name: Patient Care Platform
+    for: Southern Cross Care Western Australia
+    description: 
+    contribution: team lead, contribute
+  - name: Water Online Platform
+    for: Western Australia Department of Water
+    description: As a Senior Developer on this three year programme of work, Luke is responsible for implementing a series of projects to modernize the entire set of applications used by the Department for managing WA’s water resources into the future. Luke is also responsible for managing the continuous integration and deployment systems to ensure the quick and successful delivery of programme software to the various environments over the coming years. The technologies used include ASP.NET MVC, Knockout, SQL Server and Dynamics CRM. The projects are being delivered using an agile methodology supported by Microsoft TFS 2013. Luke also has the role of Lead Developer, assisting to manage a team of ten comprising of developers and test analysts.
+    contribution: team lead, contribute
+  - name: Mobility Solution
+    for: St John Ambulance
+    description: Luke performed the role of Project Lead and Solution Architect on a St John Ambulance mobility solution built by a team of four. Luke’s involvement started at the quoting phase of the engagement and continued through until project completion. The solution was written in Xamarin and targeted iOS and Android mobile devices. At a high level, the solution allowed an emergency dispatch system to notify registered individuals of incidents in their proximity, provide directions to the incident and present relevant medical guides. The project has been executed using the Scrum methodology with TFS.
+    contribution: design, contribute
+  - name: Application Analyst, Development & Decommissioning
+    for: Chevron
+    description: Luke worked with a major oil and gas company for two years as a Senior Developer. He delivered a number of applications including a Web Service that aggregates large volumes of analytical data between two systems. Luke was based on site with the client and quickly integrated with their culture and development practices. One of Luke’s responsibilities during this time was to analyze over 100 applications with the purpose of creating support procedures and align them with compliance standards. Luke excelled in this role and has received awards for his work.
+    contribution: analysis, contribute
+  - name: Contracts Management System
+    for: BHP Billiton Iron Ore
+    description: As a Senior Developer, Luke and was responsible for the development lifecycle, iteration management and mentoring junior developers on the project. He was also responsible for deployment management to a number of client sites. The project was to modernize an application that manages contracts worth billions of dollars and was built with ASP.NET 3.5 and SQL Server.
+    contribution: mentor, contribute
+  - name: Online Application and Records Management
+    for: New South Wales Working with Children Check
+    description: This project called for a web developer to present the client with several design variations for their staff and public web portals. Luke was specifically requested and flown over to Sydney to help with the face-to-face meetings with the client. Luke was recognised for his ability to quickly understand the solution and provide clear guidance to a non-technical audience, allowing the client to come to a speedy decision. Luke implemented the chosen design using MVC 3.0, HTML, jQuery and CSS.
+    contribution: contribute
+  - name: Online Retention and Disposal System
+    for: State Records Office of Western Australia
+    description: Luke was Senior Developer on this solution that managed XML-based record keeping plans using ASP.NET, MVC 3, Entity Framework and SQL Server. Luke followed an agile approach supported by TFS and was also involved in the deployment and release management. The project team had a number of junior developers and Luke assisted in mentoring and training them in the projects technology stack.
+    contribution: contribute
+  - name: Business-2-Business eCommerce Portal
+    for: Force Technology
+    description: Luke was specifically requested by Force Technology to quote and develop new sections and features of the existing (CSG Built) B2B Portal. Although Luke was the sole developer on site at the client premise, his work was delivered on time and on budget over the three-month engagement. The work was completed using SQL Server, MVC 2.0, WinForms, WCF, HTML 4.1 and jQuery.
+    contribution: contribute
+roles:
+  - title: Solutions Architect
+    duration: 2+ years
+    dates: Mar 2020 - Now
+    company: Cash Converters (working remotely)
+    description: In house solution architecture and software development.
+  - title: Senior Consultant, Technical Specialist
+    duration: 2 years 11 months
+    dates: May 2017 - Mar 2020
+    company: Insight (formerly Ignia)
+    description: Software development consulting engagement primarily using .NET.
+  - title: Team Lead & Senior Software Developer
+    duration: 2 years 6 months
+    dates: Jan 2015 - May 2017
+    company: NEC Australia
+    description: Team lead for 10 software developers, pre-sales, solutions design.
+  - title: Senior Software Developer
+    duration: 2 years 7 months
+    dates: Jul 2012 - Jan 2015
+    company: NEC Australia
+    description: Software development consulting engagement primarily using .NET.
+  - title: Senior Software Developer
+    duration: 1 year 7 months
+    dates: Jan 2011 - Jul 2012
+    company: CSG Services Pty Ltd
+    description: Software development consulting engagement primarily using .NET.
+  - title: Software Developer
+    duration: 3 years 5 months
+    dates: Aug 2007 - Dec 2012
+    company: CSG Services Pty Ltd
+    description: Software development consulting engagement primarily using .NET.
+  - title: Technical Consultant
+    duration: 2 years 1 month
+    dates: Jul 2005 - Jun 2007
+    company: CSG Services Pty Ltd
+    description: Software application and network support consulting engagements.
+  - title: IT Consultant
+    duration: 1 year 6 months
+    dates: Jan 2004 - Jun 2005
+    company: Wizard Communications
+    description: Software application and network installation/support consulting engagements.
+  - title: Sales / Support Consultant
+    duration: 2 years
+    dates: Jan 2002 - Dec 2003
+    company: Australian Computer Resellers
+    description: Selling and building second hand computers.
 languages:
   - name: English
-    proficiency: Work proficiency
-  - name: Mandarin Chinese
     proficiency: Native
