@@ -3,7 +3,8 @@ published: true
 layout: post
 title: Year of bread
 ---
-I've been on and off baking bread for about three years now. Most of the time the end result is good but generally inconsistent. I keep changing recipes, mixing recipes, not following recipes, using various brands of ingredients and changing my technique.
+
+I've been on and off baking bread for about three years now. Most of the time the end result is good but generally inconsistent. I keep changing recipes, mixing recipes, not following recipes, using various brands of ingredients and changing my technique.<!--more-->
 
 I like bread. I like eating and making bread. I love a challenge. And so...
 

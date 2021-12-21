@@ -3,9 +3,11 @@ published: true
 layout: post
 title: Recover commits from git
 ---
-Today I made a mistake. 
+
+Today I made a mistake.<!--more-->
 
 I was preparing a PR and told git to:
+
 * soft reset my last commit (A)
 * stash commit A
 * hard reset commits (B, C, D)
@@ -20,6 +22,7 @@ Bugger!
 With some help from my colleagues and some quick google searches I found the **git reflog** command. It shows the history of what you've done to your branch including resets. It only took a few seconds to find the SHA1 just before everything went wong.
 
 Action Plan:
+
 * backup currently busted branch
 * hard reset back to identified SHA1
 * force push to origin
