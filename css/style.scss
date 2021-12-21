@@ -286,3 +286,13 @@ footer {
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
 @import "svg-icons";
+
+$breakpoint: 48rem;
+$background-color: $white;
+$main-color:       $darkGray;
+$secondary-color:  $gray;
+
+@import "main";
+@import "header";
+@import "body";
+@import "footer";
