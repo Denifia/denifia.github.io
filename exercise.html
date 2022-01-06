@@ -1,0 +1,131 @@
+---
+---
+
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+  <script>
+    let actualColor = 'rgb(255, 99, 132)';
+    let idealColor = 'rgb(193,201,237)';
+
+    const idealData = [
+      { x: '2022-01-01', c: 0, d: 0, p: 0, s: 0 },
+      { x: '2022-01-31', c: 100, d: 500, p: 1000, s: 5000 }
+    ];
+
+    const data = [
+      { x: '2022-01-01', c: 0, d: 0, p: 0, s: 0 },
+      { x: '2022-01-05', p: 1 },
+      { x: '2022-01-06', p: 3, s: 10 }
+    ];
+
+    function exists(type) {
+      return function (element) {
+        return element.hasOwnProperty(type);
+      }
+    }
+
+    function get(type) {
+      return function (element) {
+        return { x: element.x, y: element[type] };
+      }
+    }
+
+    function getIdeal(type) {
+      return function (element) {
+        return { x: element.x, y: (element[type] / 12) };
+      }
+    }
+
+    function getData(type) {
+      return {
+        datasets: [{
+          label: 'actual',
+          backgroundColor: actualColor,
+          borderColor: actualColor,
+          data: data.filter(exists(type)).map(get(type)),
+          stepped: true
+        },
+        {
+          label: 'ideal',
+          backgroundColor: idealColor,
+          borderColor: idealColor,
+          data: idealData.filter(exists(type)).map(getIdeal(type))
+        },
+        ]
+      };
+    }
+
+    function getConfig(data) {
+      return {
+        data: data,
+        type: 'line',
+        options: {
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: "day"
+              },
+              spanGaps: 1000 * 60 * 60 * 24 * 1, // 1 day
+            },
+            y: {
+              type: "linear",
+              display: true,
+              position: 'left',
+            }
+          },
+          layout: {
+            padding: {
+              left: 50,
+              right: 50
+            }
+          }
+        }
+      };
+    }
+  </script>
+  <style>
+    h1,
+    h2 {
+      width: 100%;
+      text-align: center;
+    }
+    h2 {
+      padding-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Exercise Tracker</h1>
+  <div>
+    <h2>100 Chin-ups</h2>
+    <canvas id="chinups"></canvas>
+  </div>
+  <div>
+    <h2>500 Dips</h2>
+    <canvas id="dips"></canvas>
+  </div>
+  <div>
+    <h2>1,000 Push-ups</h2>
+    <canvas id="pushups"></canvas>
+  </div>
+  <div>
+    <h2>5,000 Squats</h2>
+    <canvas id="squats"></canvas>
+  </div>
+
+  <script>
+    new Chart(document.getElementById('chinups'), getConfig(getData("c")));
+    new Chart(document.getElementById('dips'), getConfig(getData("d")));
+    new Chart(document.getElementById('pushups'), getConfig(getData("p")));
+    new Chart(document.getElementById('squats'), getConfig(getData("s")));
+  </script>
+</body>
+
+</html>
