@@ -20,7 +20,8 @@
     const data = [
       { x: '2022-01-01', c: 0, d: 0, p: 0, s: 0 },
       { x: '2022-01-05', p: 1 },
-      { x: '2022-01-06', p: 3, s: 10 }
+      { x: '2022-01-06', p: 3, s: 10 },
+      { x: '2022-01-08', p: 3, s: 10 }
     ];
 
     function exists(type) {
@@ -42,12 +43,13 @@
     }
 
     function getData(type) {
+    	let sum = 0;
       return {
         datasets: [{
           label: 'actual',
           backgroundColor: actualColor,
           borderColor: actualColor,
-          data: data.filter(exists(type)).map(get(type)),
+          data: data.filter(exists(type)).map(get(type)).map(data => ({...data, "y":sum += data.y}) ),
           stepped: true
         },
         {
@@ -98,24 +100,25 @@
     h2 {
       padding-top: 30px;
     }
+    .chart-container {
+      margin: auto; 
+      position: relative; 
+      height: 40vh; 
+      width: 80vw;
+    }
   </style>
 </head>
 
 <body>
   <h1>Exercise Tracker</h1>
-  <div>
+  
+  <div class="chart-container">
     <h2>100 Chin-ups</h2>
     <canvas id="chinups"></canvas>
-  </div>
-  <div>
     <h2>500 Dips</h2>
     <canvas id="dips"></canvas>
-  </div>
-  <div>
     <h2>1,000 Push-ups</h2>
     <canvas id="pushups"></canvas>
-  </div>
-  <div>
     <h2>5,000 Squats</h2>
     <canvas id="squats"></canvas>
   </div>
