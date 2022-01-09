@@ -15,6 +15,8 @@ It's about time I (once again) set some fitness goals and track my progress towa
 
 Yes, those numbers are mostly made up with no real thought behind them other than they sound vaguely achievable.
 
+You can follow along as I [track my progress]({{ site.baseurl }}{{ page.url }}/tracker) towards those goals.
+
 ## Challenges
 
 I know this year is not an ideal time to be trying to set high expectations as my primary goal should be **just survive** - our second child is due in the middle of the year - but really, when is a good time? Life will always get in the way so we might as well try to roll with it.
