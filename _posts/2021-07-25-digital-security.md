@@ -1,6 +1,6 @@
 ---
 published: true
-title: Digital Security
+title: Digital security
 layout: post
 ---
 
