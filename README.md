@@ -5,5 +5,5 @@ Built with **Jekyll**; a static site generator that's perfect for GitHub hosted 
 Build and run locally
 
 ```bash
-docker run --rm --volume="local-repo-path:/srv/jekyll" --publish 4000:4000 -it jekyll/jekyll jekyll serve --no-watch
+docker run --rm --volume="local-repo-path:/srv/jekyll" --publish 4000:4000 -it jekyll/jekyll jekyll serve --no-watch --drafts
 ```
