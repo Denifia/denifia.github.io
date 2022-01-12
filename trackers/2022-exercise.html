@@ -21,9 +21,10 @@ permalink: /getting-strong/tracker
     const data = [
       { x: '2022-01-01', c: 0, d: 0, p: 0, s: 0 },
       { x: '2022-01-05', p: 1 },
-      { x: '2022-01-06', p: 3, s: 10 },
-      { x: '2022-01-08', p: 3, s: 10 },
-      { x: '2022-01-09', d: 3 }
+      { x: '2022-01-06', c: -1, p: 3, s: 10 },
+      { x: '2022-01-08', c: -1, p: 3, s: 10 },
+      { x: '2022-01-09', d: 3 },
+      { x: '2022-01-12', c: -3, d: 3, p: 8, s: 30 },
     ];
 
     function exists(type) {
@@ -32,9 +33,15 @@ permalink: /getting-strong/tracker
       }
     }
 
+    function hasPositiveValue(type) {
+      return function (element) {
+        return element[type] >= 0;
+      }
+    }
+
     function get(type) {
       return function (element) {
-        return { x: element.x, y: element[type] };
+        return { x: element.x, y: element[type], reps: element[type] };
       }
     }
 
@@ -51,7 +58,11 @@ permalink: /getting-strong/tracker
           label: 'actual',
           backgroundColor: actualColor,
           borderColor: actualColor,
-          data: data.filter(exists(type)).map(get(type)).map(data => ({...data, "y":sum += data.y}) ),
+          data: data
+            .filter(exists(type))
+            .filter(hasPositiveValue(type))
+            .map(get(type))
+            .map(data => ({...data, "y":sum += data.y})),
           stepped: true
         },
         {
@@ -87,6 +98,26 @@ permalink: /getting-strong/tracker
             padding: {
               left: 50,
               right: 50
+            }
+          },
+          plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y;
+                        }
+                        if (context.raw.reps !== null) {
+                            label += ' | added: ' + context.raw.reps;
+                        }
+                        return label;
+                    }
+                }
             }
           }
         }
