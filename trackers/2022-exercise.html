@@ -2,13 +2,24 @@
 permalink: /getting-strong/tracker
 ---
 
+<!DOCTYPE html>
 <html>
+  <head>
+    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }}</title>
 
-<head>
-  <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+    {% include meta.html %}
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@^3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
+
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+
   <script>
     let actualColor = 'rgb(255, 99, 132)';
     let idealColor = 'rgb(193,201,237)';
@@ -124,44 +135,48 @@ permalink: /getting-strong/tracker
       };
     }
   </script>
-  <style>
-    h1,
-    h2 {
-      width: 100%;
-      text-align: center;
-    }
-    h2 {
-      padding-top: 30px;
-    }
-    .chart-container {
-      margin: auto; 
-      position: relative; 
-      height: 40vh; 
-      width: 80vw;
-    }
-  </style>
-</head>
+  </head>
 
-<body>
-  <h1>Exercise Tracker</h1>
+  <body>
+    {% include header.html %}
+
+    <div id="main" role="main" class="container">
+      <article class="post">
   
-  <div class="chart-container">
-    <h2>100 Chin-ups</h2>
-    <canvas id="chinups"></canvas>
-    <h2>500 Dips</h2>
-    <canvas id="dips"></canvas>
-    <h2>1,000 Push-ups</h2>
-    <canvas id="pushups"></canvas>
-    <h2>5,000 Squats</h2>
-    <canvas id="squats"></canvas>
-  </div>
+        <h1>Getting Strong</h1>
+  
+        <div class="entry">
+          Tracking reps of a few key compound exercises across the 2022.
+          <h2>100 Chin-ups</h2>
+          <canvas id="chinups"></canvas>
+          <h2>500 Dips</h2>
+          <canvas id="dips"></canvas>
+          <h2>1,000 Push-ups</h2>
+          <canvas id="pushups"></canvas>
+          <h2>5,000 Squats</h2>
+          <canvas id="squats"></canvas>
+        </div>
+        <br/>
+        <div class="date">
+          Updated {{ '2022-01-12' | date: "%B %e, %Y" }}
+        </div>
 
-  <script>
-    new Chart(document.getElementById('chinups'), getConfig(getData("c")));
-    new Chart(document.getElementById('dips'), getConfig(getData("d")));
-    new Chart(document.getElementById('pushups'), getConfig(getData("p")));
-    new Chart(document.getElementById('squats'), getConfig(getData("s")));
-  </script>
-</body>
+      </article>
+    </div>
+    
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          {% include svg-icons.html %}
+        </footer>
+      </div>
+    </div>
 
+    <script>
+      new Chart(document.getElementById('chinups'), getConfig(getData("c")));
+      new Chart(document.getElementById('dips'), getConfig(getData("d")));
+      new Chart(document.getElementById('pushups'), getConfig(getData("p")));
+      new Chart(document.getElementById('squats'), getConfig(getData("s")));
+    </script>
+  </body>
 </html>
