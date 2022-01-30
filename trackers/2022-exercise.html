@@ -26,7 +26,7 @@ permalink: /getting-strong/tracker
 
     const idealData = [
       { x: '2022-01-01', c: 0, d: 0, p: 0, s: 0 },
-      { x: '2022-01-31', c: 100, d: 500, p: 1000, s: 5000 }
+      { x: '2022-02-28', c: 100, d: 500, p: 1000, s: 5000 }
     ];
 
     const data = [
@@ -41,7 +41,11 @@ permalink: /getting-strong/tracker
       { x: '2022-01-19', c: -8, p: 15, s: 50 },
       { x: '2022-01-23', c: -3, p: 8 },
       { x: '2022-01-25', c: -6, p: 10, s: 30 },
+      { x: '2022-01-29', c: -5, d: 1 },
+      { x: '2022-01-30', c: -6, d: 2, p: 3, s: 10 }
     ];
+
+    const updated = '2022-01-30';
 
     function exists(type) {
       return function (element) {
@@ -49,21 +53,15 @@ permalink: /getting-strong/tracker
       }
     }
 
-    function hasPositiveValue(type) {
-      return function (element) {
-        return element[type] >= 0;
-      }
-    }
-
     function get(type) {
       return function (element) {
-        return { x: element.x, y: element[type], reps: element[type] };
+        return { x: element.x, y: element[type] > 0 ? element[type] : 0, reps: element[type] };
       }
     }
 
     function getIdeal(type) {
       return function (element) {
-        return { x: element.x, y: (element[type] / 12) };
+        return { x: element.x, y: (element[type]) / 6};
       }
     }
 
@@ -76,7 +74,6 @@ permalink: /getting-strong/tracker
           borderColor: actualColor,
           data: data
             .filter(exists(type))
-            .filter(hasPositiveValue(type))
             .map(get(type))
             .map(data => ({...data, "y":sum += data.y})),
           stepped: true
@@ -86,8 +83,7 @@ permalink: /getting-strong/tracker
           backgroundColor: idealColor,
           borderColor: idealColor,
           data: idealData.filter(exists(type)).map(getIdeal(type))
-        },
-        ]
+        }]
       };
     }
 
@@ -163,7 +159,7 @@ permalink: /getting-strong/tracker
         </div>
         <br/>
         <div class="date">
-          Updated {{ '2022-01-26' | date: "%B %e, %Y" }}
+          Updated {{ updated | date: "%B %e, %Y" }}
         </div>
 
       </article>
