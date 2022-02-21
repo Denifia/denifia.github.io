@@ -1,5 +1,6 @@
 ---
 permalink: /getting-strong/tracker
+updated: "2022-02-21"
 ---
 
 <!DOCTYPE html>
@@ -42,10 +43,12 @@ permalink: /getting-strong/tracker
       { x: '2022-01-23', c: -3, p: 8 },
       { x: '2022-01-25', c: -6, p: 10, s: 30 },
       { x: '2022-01-29', c: -5, d: 1 },
-      { x: '2022-01-30', c: -6, d: 2, p: 3, s: 10 }
+      { x: '2022-01-30', c: -6, d: 2, p: 3, s: 10 },
+      { x: '2022-01-31', d: 2, s: 10 },
+      { x: '2022-02-02', c: -10, p: 10, s: 20 },
+      { x: '2022-02-07', p: 5 },
+      { x: '2022-02-10', p: 5, s: 30 },
     ];
-
-    const updated = '2022-01-30';
 
     function exists(type) {
       return function (element) {
@@ -158,10 +161,16 @@ permalink: /getting-strong/tracker
           <canvas id="squats"></canvas>
         </div>
         <br/>
-        <div class="date">
-          Updated {{ updated | date: "%B %e, %Y" }}
-        </div>
 
+        <h2>Challenges</h2>
+        <ul>
+          <li>14-20 Feb - Had a bad reaction to booster and dislocated my jaw</li>
+          <li>Jan-March - No easy access to dip station</li>
+        </ul>
+
+        <div class="date">
+          Updated {{ page.updated | date: "%B %e, %Y" }}
+        </div>
       </article>
     </div>
     
