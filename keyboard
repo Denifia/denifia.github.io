@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denifia Layout for Corne (34-key)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* Mobile-first responsive design */
+        .key {
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            transition: all 0.2s ease;
+            font-size: 0.6rem;
+        }
+        
+        /* Tablet and larger */
+        @media (min-width: 768px) {
+            .key {
+                min-width: 3rem;
+                min-height: 3rem;
+                font-size: 0.7rem;
+            }
+        }
+        
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .key {
+                min-width: 3.5rem;
+                min-height: 3.5rem;
+                font-size: 0.75rem;
+            }
+        }
+        
+        .key:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .home-row {
+            position: relative;
+        }
+        
+        .combo-key {
+            position: relative;
+            border: 2px dashed #f59e0b;
+        }
+        
+        .combo-key:hover {
+            background-color: #fef3c7 !important;
+        }
+        
+        .thumb-key {
+            min-width: 3rem;
+        }
+        
+        @media (min-width: 768px) {
+            .thumb-key {
+                min-width: 4rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .thumb-key {
+                min-width: 4.5rem;
+            }
+        }
+        .layer-active {
+            background-color: #3b82f6 !important;
+            color: white !important;
+        }
+        .key-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+        .mod-label {
+            font-size: 0.5rem;
+            color: #6b7280;
+        }
+        
+        @media (min-width: 768px) {
+            .mod-label {
+                font-size: 0.55rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .mod-label {
+                font-size: 0.6rem;
+            }
+        }
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1f2937;
+            color: white;
+            text-align: center;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            white-space: nowrap;
+            z-index: 1000;
+            transition: opacity 0.2s, visibility 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+        }
+        
+        @media (min-width: 768px) {
+            .tooltip-text {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                max-width: none;
+            }
+        }
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-6 lg:p-8">
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-center mb-4">{{ config.title }}</h1>
+        <p class="text-center text-gray-600 mb-8">{{ config.subtitle }}</p>
+        
+        <!-- Layer Selector -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button 
+                v-for="layer in config.layers" 
+                :key="layer.id"
+                @click="showLayer(layer.id)" 
+                :class="['layer-btn px-4 py-2 rounded', currentLayer === layer.id ? 'bg-blue-500 text-white' : 'bg-gray-300']"
+            >
+                {{ layer.name }}
+            </button>
+        </div>
+
+        <!-- Keyboard Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 mb-8">
+            <!-- Left Half -->
+            <div class="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-lg">
+                <h3 class="text-center font-semibold mb-4">Left Half</h3>
+                <div class="grid grid-cols-5 gap-1 sm:gap-1.5">
+                    <!-- Render left keys by rows -->
+                    <template v-for="row in 3" :key="'left-row-' + row">
+                        <div 
+                            v-for="key in getKeysForRow('left', row - 1)" 
+                            :key="key.id"
+                            :class="getKeyClasses(key)"
+                            :data-key="key.id"
+                            v-html="getKeyContent(key.id)"
+                        ></div>
+                    </template>
+                </div>
+                
+                <!-- Left Thumb Cluster -->
+                <div class="flex justify-center gap-2 mt-4">
+                    <div 
+                        v-for="thumbKey in config.keyboardLayout.leftThumbKeys" 
+                        :key="thumbKey.id"
+                        :class="getKeyClasses(thumbKey)"
+                        :data-key="thumbKey.id"
+                        v-html="getKeyContent(thumbKey.id)"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Right Half -->
+            <div class="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-lg">
+                <h3 class="text-center font-semibold mb-4">Right Half</h3>
+                <div class="grid grid-cols-5 gap-1 sm:gap-1.5">
+                    <!-- Render right keys by rows -->
+                    <template v-for="row in 3" :key="'right-row-' + row">
+                        <div 
+                            v-for="key in getKeysForRow('right', row - 1)" 
+                            :key="key.id"
+                            :class="getKeyClasses(key)"
+                            :data-key="key.id"
+                            v-html="getKeyContent(key.id)"
+                        ></div>
+                    </template>
+                </div>
+                
+                <!-- Right Thumb Cluster -->
+                <div class="flex justify-center gap-2 mt-4">
+                    <div 
+                        v-for="thumbKey in config.keyboardLayout.rightThumbKeys" 
+                        :key="thumbKey.id"
+                        :class="getKeyClasses(thumbKey)"
+                        :data-key="thumbKey.id"
+                        v-html="getKeyContent(thumbKey.id)"
+                    ></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combo Reference -->
+        <div class="mt-8 bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold">Combo Reference</h3>
+                <button 
+                    @click="showCombos = !showCombos" 
+                    class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+                >
+                    {{ showCombos ? 'Hide' : 'Show' }} Combos
+                </button>
+            </div>
+            
+            <div v-show="showCombos" class="transition-all duration-300">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Essential Combos -->
+                    <div>
+                        <!-- <h4 class="font-medium mb-3 text-blue-700">Left Half</h4> -->
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">W + F</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Delete</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">R + S</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Backspace</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">X + C</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Cut</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">C + D</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Copy</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">D + V</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Paste</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Editing Combos -->
+                    <div>
+                        <!-- <h4 class="font-medium mb-3 text-green-700">Right Half</h4> -->
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">U + Y</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Escape</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">E + I</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Enter</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">H + ,</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Colon (:)</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">, + .</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Semicolon (;)</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                <span class="font-mono bg-gray-100 combo-key px-2 py-1 rounded">G + M</span>
+                                <span class="text-gray-600">→</span>
+                                <span>Caps Word</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mt-8 bg-white p-4 rounded-lg shadow">
+            <h3 class="font-semibold mb-3">Key Features of This Layout</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <h4 class="font-medium mb-2">Color Legend:</h4>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 bg-blue-100 rounded"></div>
+                            <span>Home row with modifiers</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 bg-gray-100 rounded"></div>
+                            <span>Standard alphanumeric keys</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 bg-green-200 rounded"></div>
+                            <span>Thumb keys</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 bg-gray-100 border-2 border-dashed border-yellow-600 rounded"></div>
+                            <span>Combo keys (see Combo Reference above)</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">Layout Benefits:</h4>
+                    <ul class="space-y-1 text-gray-600">
+                        <li>• Compact 34-key ergonomic layout</li>
+                        <li>• Home row modifiers for comfort</li>
+                        <li>• Layer-based number/symbol access</li>
+                        <li>• Usable on laptop keyboards</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Change Layers -->
+        <div class="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-200">
+            <h3 class="font-semibold text-blue-900 mb-4 text-center">How to the layers</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Physical Keyboard Usage -->
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="font-medium text-blue-800 mb-3 flex items-center">
+                        <span class="bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">1</span>
+                        On Your Physical Keyboard
+                    </h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Hold</span>
+                            <div>
+                                <strong>Space key (either thumb)</strong> → Navigation layer
+                                <div class="text-gray-600 text-xs">Arrow keys and navigation</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">&nbsp;Tap&nbsp;</span>
+                            <div>
+                                <strong>Symbols key (right thumb)</strong> → One-shot Symbols layer
+                                <div class="text-gray-600 text-xs">Next key press is a special character</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Hold</span>
+                            <div>
+                                <strong>Symbols key (right thumb)</strong> → Symbols layer
+                                <div class="text-gray-600 text-xs">Special characters</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Hold</span>
+                            <div>
+                                <strong>A key (left pinky)</strong> → Numbers layer
+                                <div class="text-gray-600 text-xs">Numeric keypad layout & one handed navigation</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Hold</span>
+                            <div>
+                                <strong>O key (right pinky)</strong> → Function layer
+                                <div class="text-gray-600 text-xs">F-keys and system functions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualizer Usage -->
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <h4 class="font-medium text-blue-800 mb-3 flex items-center">
+                        <span class="bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">2</span>
+                        In This Visualizer
+                    </h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Click</span>
+                            <div>
+                                <strong>Layer buttons above</strong> → Switch views
+                                <div class="text-gray-600 text-xs">See what each layer looks like</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">Hover</span>
+                            <div>
+                                <strong>Over any key</strong> → See details
+                                <div class="text-gray-600 text-xs">Keys lift up to show they're interactive</div>
+                            </div>
+                        </div>
+                        <div class="text-gray-600 text-xs mt-3 p-2 bg-gray-50 rounded">
+                            💡 <strong>Tip:</strong> The visualizer shows the final result - on your keyboard, you hold thumb keys to temporarily access other layers while typing
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Principle -->
+            <div class="mt-4 p-3 bg-blue-100 rounded-lg text-center">
+                <p class="text-sm text-blue-800">
+                    <strong>Key Principle:</strong> 
+                    Reduce pinky stretch • Use thumbs for common key holds • Layout usable on laptop keyboards
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Tips -->
+        <div class="mt-4 text-center text-gray-600">
+            <p class="font-medium">Quick Reference:</p>
+            <p class="text-sm mt-1">Home row modifiers: Ctrl (S/E) | Alt (T/N) | GUI (R/I)</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 pt-8 border-t border-gray-300 text-center">
+            <p class="text-xs text-gray-500">
+                Stolen the design from <a href="https://jellydn.github.io/miryoku-silakka54-layout/index-corne.html" class="text-blue-500 hover:underline" target="_blank" rel="noopener">Miryoku Layout</a> by <a href="http://itman.fyi/" class="text-blue-500 hover:underline" target="_blank" rel="noopener">itman.fyi</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Embed your JSON here -->
+    <script id="app-data" type="application/json">
+{
+  "title": "Denifia Layout for Corne (34-key)",
+  "subtitle": "34-key split keyboard with Colemak-DH, home row modifiers, combos, and 5 layers",
+  "layers": [
+    {"id": "base", "name": "Base", "active": true},
+    {"id": "nav", "name": "Navigation", "active": false},
+    {"id": "sym", "name": "Symbols", "active": false},
+    {"id": "num", "name": "Numbers", "active": false},
+    {"id": "fun", "name": "Function", "active": false}
+  ],
+  "keyboardLayout": {
+    "leftKeys": [
+      {"id": "L01", "row": 0, "class": "bg-gray-100"},
+      {"id": "L02", "row": 0, "class": "bg-gray-100 combo-key"},
+      {"id": "L03", "row": 0, "class": "bg-gray-100 combo-key"},
+      {"id": "L04", "row": 0, "class": "bg-gray-100"},
+      {"id": "L05", "row": 0, "class": "bg-gray-100"},
+      {"id": "L11", "row": 1, "class": "bg-blue-100 home-row"},
+      {"id": "L12", "row": 1, "class": "bg-blue-100 home-row combo-key"},
+      {"id": "L13", "row": 1, "class": "bg-blue-100 home-row combo-key"},
+      {"id": "L14", "row": 1, "class": "bg-blue-100 home-row"},
+      {"id": "L15", "row": 1, "class": "bg-gray-100 combo-key"},
+      {"id": "L21", "row": 2, "class": "bg-gray-100"},
+      {"id": "L22", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "L23", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "L24", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "L25", "row": 2, "class": "bg-gray-100 combo-key"}
+    ],
+    "leftThumbKeys": [
+      {"id": "LT1", "class": "bg-green-200 thumb-key"},
+      {"id": "LT2", "class": "bg-green-200 thumb-key"}
+    ],
+    "rightKeys": [
+      {"id": "R05", "row": 0, "class": "bg-gray-100"},
+      {"id": "R04", "row": 0, "class": "bg-gray-100"},
+      {"id": "R03", "row": 0, "class": "bg-gray-100 combo-key"},
+      {"id": "R02", "row": 0, "class": "bg-gray-100 combo-key"},
+      {"id": "R01", "row": 0, "class": "bg-gray-100"},
+      {"id": "R15", "row": 1, "class": "bg-gray-100 combo-key"},
+      {"id": "R14", "row": 1, "class": "bg-blue-100 home-row"},
+      {"id": "R13", "row": 1, "class": "bg-blue-100 home-row combo-key"},
+      {"id": "R12", "row": 1, "class": "bg-blue-100 home-row combo-key"},
+      {"id": "R11", "row": 1, "class": "bg-blue-100 home-row"},
+      {"id": "R25", "row": 2, "class": "bg-gray-100"},
+      {"id": "R24", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "R23", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "R22", "row": 2, "class": "bg-gray-100 combo-key"},
+      {"id": "R21", "row": 2, "class": "bg-gray-100"}
+    ],
+    "rightThumbKeys": [
+      {"id": "RT2", "class": "bg-green-200 thumb-key"},
+      {"id": "RT1", "class": "bg-green-200 thumb-key"}
+    ]
+  },
+  "tooltips": {
+    "L11": "A key | Hold: Momentary Numbers layer",
+    "L12": "R key | Hold: GUI",
+    "L13": "S key | Hold: Control modifier", 
+    "L14": "T key | Hold: Alt modifier",
+    "L15": "G key | Part of a combo",
+    "R15": "M key | Part of a combo",
+    "R14": "N key | Hold: Alt modifier",
+    "R13": "E key | Hold: Control modifier",
+    "R12": "I key | Hold: GUI",
+    "R11": "O key | Hold: Momentary Functions layer",
+    "LT1": "Tap: One-shot Shift modifier | Hold: Shift modifier",
+    "LT2": "Space key | Hold: Momentary Nav layer",
+    "RT1": "Tap: One-shot Symbols layer | Hold: Momentary Symbols layer",
+    "RT2": "Space key | Hold: Momentary Nav layer",
+    "L02": "W key | Part of a combo",
+    "L03": "F key | Part of a combo",
+    "R03": "U key | Part of a combo",
+    "R02": "Y key | Part of a combo",
+    "R24": "H key | Part of a combo",
+    "R23": "Comma key | Part of a combo",
+    "R22": "Dot key | Part of a combo"
+  },
+  "layerData": {
+    "base": {
+      "L01": "Q", 
+      "L02": "W", 
+      "L03": "F", 
+      "L04": "P", 
+      "L05": "B", 
+      "L11": "<div class=\"key-label\">A<br><span class=\"mod-label\">Num</span></div>", 
+      "L12": "<div class=\"key-label\">R<br><span class=\"mod-label\">GUI</span></div>", 
+      "L13": "<div class=\"key-label\">S<br><span class=\"mod-label\">Ctrl</span></div>", 
+      "L14": "<div class=\"key-label\">T<br><span class=\"mod-label\">Alt</span></div>", 
+      "L15": "G", 
+      "L21": "Z", 
+      "L22": "X", 
+      "L23": "C", 
+      "L24": "D", 
+      "L25": "V", 
+      "LT1": "Shift",
+      "LT2": "<div class=\"key-label\">Space<br><span class=\"mod-label\">Nav</span></div>", 
+      "R01": "\"",
+      "R02": "Y", 
+      "R03": "U", 
+      "R04": "L", 
+      "R05": "J", 
+      "R11": "<div class=\"key-label\">O<br><span class=\"mod-label\">Fun</span></div>", 
+      "R12": "<div class=\"key-label\">I<br><span class=\"mod-label\">GUI</span></div>", 
+      "R13": "<div class=\"key-label\">E<br><span class=\"mod-label\">Ctrl</span></div>", 
+      "R14": "<div class=\"key-label\">N<br><span class=\"mod-label\">Alt</span></div>", 
+      "R15": "M", 
+      "R21": "/",
+      "R22": ".", 
+      "R23": ",", 
+      "R24": "H", 
+      "R25": "K", 
+      "RT1": "Symbols", 
+      "RT2": "<div class=\"key-label\">Space<br><span class=\"mod-label\">Nav</span></div>"
+    },
+    "nav": {
+      "L01": "", "L02": "Tab Close", "L03": "Tab Prev", "L04": "Tab Next", "L05": "",
+      "L11": "Back", "L12": "Forward", "L13": "Shift Tab", "L14": "Tab", "L15": "",
+      "L21": "", "L22": "", "L23": "Win Prev", "L24": "Win Next", "L25": "",
+      "LT1": "", "LT2": "___",
+      "R05": "Home", "R04": "PgDn", "R03": "PgUp", "R02": "End", "R01": "",
+      "R15": "←", "R14": "↓", "R13": "↑", "R12": "→", "R11": "",
+      "R25": "", "R24": "", "R23": "", "R22": "", "R21": "",
+      "RT2": "___", "RT1": ""
+    },
+    "sym": {
+      "L01": "^", "L02": "<", "L03": ">", "L04": "$", "L05": "%",
+      "L11": "{", "L12": "(", "L13": ")", "L14": "}", "L15": "=",
+      "L21": "~", "L22": "[", "L23": "]", "L24": "_", "L25": "#",
+      "LT1": "Backspace", "LT2": "Space",
+      "R05": "@", "R04": "&", "R03": "*", "R02": "'", "R01": "`",
+      "R15": "\\", "R14": "+", "R13": "-", "R12": "/", "R11": "\"",
+      "R25": "|", "R24": "!", "R23": ";", "R22": ":", "R21": "?",
+      "RT2": "Space", "RT1": "___"
+    },
+    "num": {
+      "L01": "", "L02": "Home", "L03": "↑", "L04": "End", "L05": "PgUp",
+      "L11": "___", "L12": "←", "L13": "↓", "L14": "→", "L15": "PgDn",
+      "L21": "", "L22": "", "L23": "", "L24": "", "L25": "",
+      "LT1": "Backspace", "LT2": "Space",
+      "R05": "/", "R04": "7", "R03": "8", "R02": "9", "R01": "=",
+      "R15": "-", "R14": "4", "R13": "5", "R12": "6", "R11": "0",
+      "R25": ",", "R24": "1", "R23": "2", "R22": "3", "R21": ".",
+      "RT2": "Space", "RT1": ""
+    },
+    "fun": {
+      "L01": "", "L02": "Speed Up", "L03": "Hue Up", "L04": "Bright Up", "L05": "Sat Up",
+      "L11": "Lights On/Off", "L12": "Speed Down", "L13": "Hue Down", "L14": "Bright Down", "L15": "Sat Down",
+      "L21": "", "L22": "", "L23": "", "L24": "", "L25": "",
+      "LT1": "Backspace", "LT2": "Space",
+      "R05": "F10", "R04": "F7", "R03": "F8", "R02": "F9", "R01": "",
+      "R15": "F11", "R14": "F4", "R13": "F5", "R12": "F6", "R11": "___",
+      "R25": "F12", "R24": "F1", "R23": "F2", "R22": "F3", "R21": "",
+      "RT2": "Space", "RT1": ""
+    }
+  }
+}
+    </script>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    config: {
+                        title: 'Loading...',
+                        subtitle: 'Loading keyboard layout...',
+                        layers: [],
+                        keyboardLayout: {
+                            leftKeys: [],
+                            rightKeys: [],
+                            leftThumbKeys: [],
+                            rightThumbKeys: []
+                        },
+                        tooltips: {},
+                        layerData: {}
+                    },
+                    currentLayer: 'base',
+                    showCombos: true
+                }
+            },
+            async mounted() {
+                await this.loadConfig();
+                this.updateTooltips();
+            },
+            methods: {
+                async loadConfig() {
+                    try {
+                        //const response = await fetch('./app-corne.json');
+                        //this.config = await response.json();
+
+                        const rawJson = document.getElementById('app-data').textContent;
+                        this.config = JSON.parse(rawJson);
+
+                        this.currentLayer = this.config.layers.find(l => l.active)?.id || 'base';
+                    } catch (error) {
+                        console.error('Failed to load config:', error);
+                        // Fallback config
+                        this.config = {
+                            title: 'Miryoku Layout for Corne',
+                            subtitle: '42-key split keyboard with Colemak-DH, home row modifiers, and 5 layers',
+                            layers: [
+                                {id: 'base', name: 'Base', active: true}
+                            ],
+                            keyboardLayout: { leftKeys: [], rightKeys: [], leftThumbKeys: [], rightThumbKeys: [] },
+                            tooltips: {},
+                            layerData: { base: {} }
+                        };
+                    }
+                },
+                showLayer(layerId) {
+                    this.currentLayer = layerId;
+                    this.$nextTick(() => {
+                        this.updateTooltips();
+                    });
+                },
+                getKeysForRow(side, row) {
+                    if (!this.config.keyboardLayout) return [];
+                    const keys = side === 'left' ? this.config.keyboardLayout.leftKeys : this.config.keyboardLayout.rightKeys;
+                    return keys ? keys.filter(key => key.row === row) : [];
+                },
+                getKeyClasses(key) {
+                    let classes = ['key', 'rounded', 'flex', 'items-center', 'justify-center', 'tooltip'];
+                    
+                    // Add base classes from config
+                    if (key.class) {
+                        const baseClasses = key.class.split(' ').filter(cls => cls !== 'combo-key');
+                        classes = classes.concat(baseClasses);
+                    }
+                    
+                    // Only add combo-key class if we're on the base layer
+                    if (this.currentLayer === 'base' && key.class && key.class.includes('combo-key')) {
+                        classes.push('combo-key');
+                    }
+                    
+                    return classes;
+                },
+                getKeyContent(keyId) {
+                    if (!this.config.layerData) return '';
+                    const layerData = this.config.layerData[this.currentLayer];
+                    if (!layerData) return '';
+                    
+                    const keyValue = layerData[keyId] || '';
+                    const tooltipText = this.getTooltipText(keyId, keyValue);
+                    
+                    if (tooltipText) {
+                        return `<span class="text-xs font-medium">${keyValue}</span>
+                                <div class="tooltip-text">${tooltipText}</div>`;
+                    } else {
+                        return `<span class="text-xs font-medium">${keyValue}</span>`;
+                    }
+                },
+                getTooltipText(keyId, keyValue) {
+                    // Only show combo-specific tooltips on base layer
+                    if (this.currentLayer === 'base' && this.config.tooltips && this.config.tooltips[keyId]) {
+                        return this.config.tooltips[keyId];
+                    } 
+                    // For non-base layers, show generic descriptions
+                    else if (keyValue === '' || keyValue === '___') {
+                        return keyValue === '___' ? 'Layer key being held' : 'No function on this layer';
+                    } else {
+                        // Generic tooltip for regular keys
+                        const keyDescriptions = {
+                            '←': 'Left arrow key',
+                            '→': 'Right arrow key', 
+                            '↑': 'Up arrow key',
+                            '↓': 'Down arrow key',
+                            'PgUp': 'Page Up key',
+                            'PgDn': 'Page Down key',
+                            'Bksp': 'Backspace key',
+                            'GUI': 'GUI/Super modifier',
+                            'Alt': 'Alt modifier',
+                            'Ctrl': 'Control modifier', 
+                            'Shift': 'Shift modifier',
+                            'Cut': 'Cut to clipboard (Ctrl+X)',
+                            'Copy': 'Copy to clipboard (Ctrl+C)',
+                            'Paste': 'Paste from clipboard (Ctrl+V)',
+                            'Undo': 'Undo last action (Ctrl+Z)',
+                            'M←': 'Mouse movement: Left',
+                            'M↓': 'Mouse movement: Down',
+                            'M↑': 'Mouse movement: Up',
+                            'M→': 'Mouse movement: Right',
+                            'LClick': 'Mouse: Left click',
+                            'MClick': 'Mouse: Middle click (wheel)',
+                            'RClick': 'Mouse: Right click',
+                            'WhlL': 'Mouse wheel: Left',
+                            'WhlD': 'Mouse wheel: Down',
+                            'WhlU': 'Mouse wheel: Up',
+                            'WhlR': 'Mouse wheel: Right'
+                        };
+                        return keyDescriptions[keyValue] || `${keyValue} key`;
+                    }
+                },
+                updateTooltips() {
+                    // Vue handles this automatically through reactivity
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
