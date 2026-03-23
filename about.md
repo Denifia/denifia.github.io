@@ -2,7 +2,7 @@
 layout: page
 title: About
 permalink: /about/
-published: true
+published: false
 ---
 
 I'm a happy-go-lucky type of guy that enjoys learning, challenge and winning. These combined to fuel my constant need to explore new skills and hobbies. In my professional life, I'm a Solutions Architect with over a decade of experience.
