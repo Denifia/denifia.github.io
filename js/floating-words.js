@@ -118,6 +118,12 @@
     var valid = false;
     var x, y, driftX, driftY;
 
+    // Skip if viewport is too small to fit the word within the safe zone
+    if (vpWidth - pad * 2 < wordW || vpHeight - pad * 2 < wordH) {
+      el.style.display = 'none';
+      return;
+    }
+
     // Refresh the dead zone each spawn (cheap getBoundingClientRect call)
     updateDeadZone();
 
@@ -128,8 +134,8 @@
       driftY = Math.sin(angle) * driftDist;
 
       // Random start position (accounts for word size)
-      x = rand(pad, Math.max(pad + 1, vpWidth  - pad - wordW));
-      y = rand(pad, Math.max(pad + 1, vpHeight - pad - wordH));
+      x = rand(pad, vpWidth  - pad - wordW);
+      y = rand(pad, vpHeight - pad - wordH);
 
       // Start and end bounding rects
       var startR = { left: x,          top: y,          right: x + wordW,          bottom: y + wordH };
@@ -143,9 +149,9 @@
         bottom: Math.max(startR.bottom, endR.bottom)
       };
 
-      // Reject if any part of the swept path goes outside the viewport
-      if (swept.left < 0 || swept.top < 0 ||
-          swept.right > vpWidth || swept.bottom > vpHeight) {
+      // Reject if any part of the swept path goes outside the safe zone
+      if (swept.left < pad || swept.top < pad ||
+          swept.right > vpWidth - pad || swept.bottom > vpHeight - pad) {
         continue;
       }
 
