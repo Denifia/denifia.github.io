@@ -32,6 +32,7 @@
   var words       = window.__floatingWords || [];
   var pool        = [];
   var activeCount = 0;
+  var activeWords = {};            // track visible word texts to prevent duplicates
   var container   = null;
   var spawnTimer  = null;
   var resizeTimer = null;
@@ -63,7 +64,7 @@
       var el = document.createElement('span');
       el.className = 'floating-word';
       container.appendChild(el);
-      pool.push({ el: el, active: false, timer1: null, timer2: null });
+      pool.push({ el: el, active: false, timer1: null, timer2: null, wordText: null });
     }
   }
 
@@ -80,7 +81,11 @@
     var item = getAvailable();
     if (!item) return;
 
-    var wordData = pickRandom(words);
+    // Filter out words already visible on screen
+    var available = words.filter(function (w) { return !activeWords[w.text]; });
+    if (!available.length) return;
+
+    var wordData = pickRandom(available);
     var text     = wordData.text;
     var weight   = clamp(wordData.weight || 3, 1, 5);
 
@@ -177,6 +182,8 @@
     var targetOpacity = rand(0.25, CONFIG.maxOpacity);
 
     item.active = true;
+    item.wordText = text;
+    activeWords[text] = true;
     activeCount++;
 
     // Force reflow so the browser registers the starting values
@@ -202,6 +209,8 @@
     item.timer2 = setTimeout(function () {
       el.style.willChange = 'auto';
       el.style.display = 'none';
+      delete activeWords[item.wordText];
+      item.wordText = null;
       item.active = false;
       activeCount--;
     }, duration + 100);
@@ -223,6 +232,8 @@
         pool[i].el.style.willChange = 'auto';
         pool[i].el.style.display = 'none';
         pool[i].el.style.opacity = '0';
+        delete activeWords[pool[i].wordText];
+        pool[i].wordText = null;
         pool[i].active = false;
         activeCount--;
       }
