@@ -262,7 +262,7 @@
 
     createPool();
     updateDeadZone();
-    startSpawning();
+    setTimeout(startSpawning, 3000);
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('resize', handleResize);
   }
