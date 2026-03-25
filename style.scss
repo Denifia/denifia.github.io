@@ -100,8 +100,9 @@ img {
   position: absolute;
   width: 380px;
   height: auto;
-  opacity: 0.45;
+  opacity: 0.15;
   pointer-events: none;
+  filter: grayscale(100%);
 
   @include mobile {
     width: 300px;
