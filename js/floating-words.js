@@ -28,8 +28,78 @@
            a.top < b.bottom && a.bottom > b.top;
   }
 
+  /* -- Markdown parser (brain.md → [{text, weight}]) --------------- */
+  function parseBrainMd(md) {
+    if (!md) return [];
+    var lines = md.split('\n');
+    var result = [];
+    var currentWeight = 3;
+    var multiLineBuffer = null;
+    var inComment = false;
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+
+      // Handle multi-line HTML comments
+      if (inComment) {
+        if (line.indexOf('-->') !== -1) { inComment = false; }
+        continue;
+      }
+
+      var trimmed = line.trim();
+
+      // Check for HTML comment start
+      if (trimmed.indexOf('<!--') === 0) {
+        if (trimmed.indexOf('-->') !== -1) { continue; } // single-line comment
+        inComment = true;
+        continue;
+      }
+
+      // Skip empty lines
+      if (trimmed === '') continue;
+
+      // Skip top-level header (e.g. "# Brain")
+      if (/^#[^#]/.test(trimmed)) continue;
+
+      // Weight header (e.g. "## 5 - top of mind")
+      var weightMatch = trimmed.match(/^##\s+(\d+)/);
+      if (weightMatch) {
+        currentWeight = parseInt(weightMatch[1], 10);
+        continue;
+      }
+
+      // Multi-line entry continuation
+      if (multiLineBuffer !== null) {
+        if (trimmed.charAt(trimmed.length - 1) === '`') {
+          multiLineBuffer += '\n' + trimmed.slice(0, -1);
+        } else {
+          multiLineBuffer += '\n' + trimmed;
+          result.push({ text: multiLineBuffer, weight: currentWeight });
+          multiLineBuffer = null;
+        }
+        continue;
+      }
+
+      // Trailing backtick starts a multi-line entry
+      if (trimmed.charAt(trimmed.length - 1) === '`') {
+        multiLineBuffer = trimmed.slice(0, -1);
+        continue;
+      }
+
+      // Regular single-line entry
+      result.push({ text: trimmed, weight: currentWeight });
+    }
+
+    // Flush any remaining multi-line buffer
+    if (multiLineBuffer !== null) {
+      result.push({ text: multiLineBuffer, weight: currentWeight });
+    }
+
+    return result;
+  }
+
   /* -- State ------------------------------------------------------- */
-  var words       = window.__floatingWords || [];
+  var words       = parseBrainMd(window.__floatingWordsMd);
   var pool        = [];
   var activeCount = 0;
   var activeWords = {};            // track visible word texts to prevent duplicates
