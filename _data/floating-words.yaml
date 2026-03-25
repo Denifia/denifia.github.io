@@ -1,0 +1,18 @@
+- text: boardgames
+  weight: 3
+- text: movies
+  weight: 2
+- text: leatherworking
+  weight: 3
+- text: running
+  weight: 4
+- text: knife sharpening
+  weight: 2
+- text: cooking
+  weight: 3
+- text: making bread
+  weight: 4
+- text: music
+  weight: 3
+- text: agentic coding
+  weight: 5
