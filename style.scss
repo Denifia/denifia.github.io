@@ -99,6 +99,7 @@ img {
 .brain-art {
   position: absolute;
   width: 380px;
+  max-width: none;
   height: auto;
   opacity: 0.15;
   pointer-events: none;
