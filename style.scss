@@ -89,35 +89,38 @@ img {
   min-height: 80vh;
 }
 
+.brain-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brain-art {
+  position: absolute;
+  width: 380px;
+  height: auto;
+  opacity: 0.45;
+  pointer-events: none;
+
+  @include mobile {
+    width: 300px;
+  }
+}
+
 .minimal-name {
   font-family: $helveticaNeue;
   font-weight: 300;
   font-size: 48px;
   letter-spacing: 2px;
   color: $darkerGray;
-  margin: 0 0 24px 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
 
   @include mobile {
     font-size: 36px;
     letter-spacing: 1px;
-  }
-}
-
-.minimal-link {
-  font-family: $helveticaNeue;
-  font-size: 18px;
-  font-weight: 300;
-  color: $blue;
-  letter-spacing: 1px;
-  text-decoration: none;
-  padding: 8px 0;
-
-  &:hover, &:active {
-    text-decoration: underline;
-  }
-
-  @include mobile {
-    font-size: 16px;
   }
 }
 
