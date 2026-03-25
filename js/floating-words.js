@@ -27,6 +27,7 @@
   var activeCount = 0;
   var container   = null;
   var spawnTimer  = null;
+  var resizeTimer = null;
   var vpWidth, vpHeight;
 
   /* ── Object pool ────────────────────────────────────────────────── */
@@ -106,6 +107,9 @@
     // Force reflow so the browser registers the starting values
     void el.offsetHeight;
 
+    // Promote to compositing layer only while animating
+    el.style.willChange = 'transform, opacity';
+
     // Kick off CSS transitions
     el.style.transition =
       'opacity ' + CONFIG.fadeMs + 'ms ease, ' +
@@ -121,6 +125,7 @@
 
     // Schedule recycle (slight buffer after fade-out ends)
     item.timer2 = setTimeout(function () {
+      el.style.willChange = 'auto';
       el.style.display = 'none';
       item.active = false;
       activeCount--;
@@ -135,11 +140,31 @@
 
   function stopSpawning() {
     if (spawnTimer) { clearInterval(spawnTimer); spawnTimer = null; }
+    // Clear all pending timers for active pool items
+    for (var i = 0; i < pool.length; i++) {
+      if (pool[i].timer1) { clearTimeout(pool[i].timer1); pool[i].timer1 = null; }
+      if (pool[i].timer2) { clearTimeout(pool[i].timer2); pool[i].timer2 = null; }
+      if (pool[i].active) {
+        pool[i].el.style.willChange = 'auto';
+        pool[i].el.style.display = 'none';
+        pool[i].el.style.opacity = '0';
+        pool[i].active = false;
+        activeCount--;
+      }
+    }
   }
 
   function handleVisibility() {
     if (document.hidden) { stopSpawning(); }
     else if (!spawnTimer) { startSpawning(); }
+  }
+
+  function handleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      vpWidth  = window.innerWidth;
+      vpHeight = window.innerHeight;
+    }, 200);
   }
 
   function init() {
@@ -151,6 +176,7 @@
     createPool();
     startSpawning();
     document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('resize', handleResize);
   }
 
   /* ── Entry point (respect prefers-reduced-motion) ───────────────── */
