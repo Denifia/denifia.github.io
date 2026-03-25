@@ -10,10 +10,7 @@ layout: default
 </div>
 
 <script>
-  window.__floatingWords = [
-    {% for w in site.data.floating-words %}
-    { text: {{ w.text | jsonify }}, weight: {{ w.weight | default: 3 }} }{% unless forloop.last %},{% endunless %}
-    {% endfor %}
-  ];
+  {% capture brain_md %}{% include brain.md %}{% endcapture %}
+  window.__floatingWordsMd = {{ brain_md | jsonify }};
 </script>
 <script src="{{ site.baseurl }}/js/floating-words.js"></script>
