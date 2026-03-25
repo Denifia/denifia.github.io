@@ -34,7 +34,7 @@
     var lines = md.split('\n');
     var result = [];
     var currentWeight = 3;
-    var multiLineBuffer = null;
+    var currentItem = null;
     var inComment = false;
 
     for (var i = 0; i < lines.length; i++) {
@@ -55,8 +55,14 @@
         continue;
       }
 
-      // Skip empty lines
-      if (trimmed === '') continue;
+      // Skip empty lines (flush any pending item first)
+      if (trimmed === '') {
+        if (currentItem !== null) {
+          result.push({ text: currentItem, weight: currentWeight });
+          currentItem = null;
+        }
+        continue;
+      }
 
       // Skip top-level header (e.g. "# Brain")
       if (/^#[^#]/.test(trimmed)) continue;
@@ -64,35 +70,34 @@
       // Weight header (e.g. "## 5 - top of mind")
       var weightMatch = trimmed.match(/^##\s+(\d+)/);
       if (weightMatch) {
+        if (currentItem !== null) {
+          result.push({ text: currentItem, weight: currentWeight });
+          currentItem = null;
+        }
         currentWeight = parseInt(weightMatch[1], 10);
         continue;
       }
 
-      // Multi-line entry continuation
-      if (multiLineBuffer !== null) {
-        if (trimmed.charAt(trimmed.length - 1) === '`') {
-          multiLineBuffer += '\n' + trimmed.slice(0, -1);
-        } else {
-          multiLineBuffer += '\n' + trimmed;
-          result.push({ text: multiLineBuffer, weight: currentWeight });
-          multiLineBuffer = null;
+      // List item (e.g. "- entry text")
+      var listMatch = trimmed.match(/^-\s+(.*)/);
+      if (listMatch) {
+        if (currentItem !== null) {
+          result.push({ text: currentItem, weight: currentWeight });
         }
+        currentItem = listMatch[1];
         continue;
       }
 
-      // Trailing backtick starts a multi-line entry
-      if (trimmed.charAt(trimmed.length - 1) === '`') {
-        multiLineBuffer = trimmed.slice(0, -1);
+      // Indented continuation of a list item (multiline)
+      if (currentItem !== null && (line.charAt(0) === ' ' || line.charAt(0) === '\t')) {
+        currentItem += '\n' + trimmed;
         continue;
       }
-
-      // Regular single-line entry
-      result.push({ text: trimmed, weight: currentWeight });
     }
 
-    // Flush any remaining multi-line buffer
-    if (multiLineBuffer !== null) {
-      result.push({ text: multiLineBuffer, weight: currentWeight });
+    // Flush any remaining item
+    if (currentItem !== null) {
+      result.push({ text: currentItem, weight: currentWeight });
     }
 
     return result;
