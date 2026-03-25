@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  /* ── Configurable knobs ─────────────────────────────────────────── */
+  /* -- Configurable knobs ------------------------------------------ */
   var CONFIG = {
     maxOnScreen:     5,            // max simultaneous visible words
     spawnIntervalMs: 2500,         // ms between spawn attempts
@@ -12,16 +12,23 @@
     fadeMs:          1200,         // fade-in / fade-out duration (ms)
     maxOpacity:      0.55,         // ceiling for per-word target opacity
     poolSize:        8,            // DOM elements to pre-create
-    edgePadding:     60            // px inset from viewport edges
+    edgePadding:     60,           // px inset from viewport edges
+    deadZonePadding: 40,           // px extra padding around the brain image
+    maxPlacementAttempts: 30       // retries before skipping a spawn
   };
 
-  /* ── Helpers ────────────────────────────────────────────────────── */
+  /* -- Helpers ----------------------------------------------------- */
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
   function lerp(a, b, t)    { return a + (b - a) * clamp(t, 0, 1); }
   function rand(lo, hi)     { return lo + Math.random() * (hi - lo); }
   function pickRandom(arr)  { return arr[Math.floor(Math.random() * arr.length)]; }
 
-  /* ── State ──────────────────────────────────────────────────────── */
+  function rectsOverlap(a, b) {
+    return a.left < b.right && a.right > b.left &&
+           a.top < b.bottom && a.bottom > b.top;
+  }
+
+  /* -- State ------------------------------------------------------- */
   var words       = window.__floatingWords || [];
   var pool        = [];
   var activeCount = 0;
@@ -29,8 +36,23 @@
   var spawnTimer  = null;
   var resizeTimer = null;
   var vpWidth, vpHeight;
+  var deadZone    = null;          // cached brain exclusion rect
 
-  /* ── Object pool ────────────────────────────────────────────────── */
+  /* -- Dead zone (brain image exclusion area) ---------------------- */
+  function updateDeadZone() {
+    var brain = document.querySelector('.brain-art');
+    if (!brain) { deadZone = null; return; }
+    var r   = brain.getBoundingClientRect();
+    var pad = CONFIG.deadZonePadding;
+    deadZone = {
+      left:   r.left   - pad,
+      top:    r.top    - pad,
+      right:  r.right  + pad,
+      bottom: r.bottom + pad
+    };
+  }
+
+  /* -- Object pool ------------------------------------------------- */
   function createPool() {
     container = document.createElement('div');
     container.className = 'floating-words-container';
@@ -52,7 +74,7 @@
     return null;
   }
 
-  /* ── Spawn logic ────────────────────────────────────────────────── */
+  /* -- Spawn logic ------------------------------------------------- */
   function spawnWord() {
     if (activeCount >= CONFIG.maxOnScreen) return;
     var item = getAvailable();
@@ -62,44 +84,91 @@
     var text     = wordData.text;
     var weight   = clamp(wordData.weight || 3, 1, 5);
 
-    // Normalise weight 1-5 → 0-1
+    // Normalise weight 1-5 to 0-1
     var wt = (weight - 1) / 4;
 
-    // Visual properties: weight biases toward larger/longer, randomness adds variety
+    // Visual properties: weight biases toward larger/longer
     var fontSize   = lerp(CONFIG.sizeRange[0], CONFIG.sizeRange[1],
                           wt * 0.6 + Math.random() * 0.4);
     var fontWeight = CONFIG.weightOptions[
                        Math.floor(lerp(0, CONFIG.weightOptions.length - 1,
-                                       wt * 0.5 + Math.random() * 0.5))];
+                                        wt * 0.5 + Math.random() * 0.5))];
     var duration   = lerp(CONFIG.durationRange[0], CONFIG.durationRange[1],
                           wt * 0.5 + Math.random() * 0.5);
     var driftDist  = lerp(CONFIG.driftRange[0], CONFIG.driftRange[1],
                           wt * 0.3 + Math.random() * 0.7);
 
-    // Random drift angle
-    var angle  = Math.random() * Math.PI * 2;
-    var driftX = Math.cos(angle) * driftDist;
-    var driftY = Math.sin(angle) * driftDist;
-
-    // Random position inside safe zone
-    var pad = CONFIG.edgePadding;
-    var x   = rand(pad, vpWidth  - pad);
-    var y   = rand(pad, vpHeight - pad);
-
-    // Per-word opacity target
-    var targetOpacity = rand(0.25, CONFIG.maxOpacity);
-
-    /* ── Apply to DOM element ──────────────────────────────────── */
+    /* -- Measure the word so we can validate placement ---------- */
     var el = item.el;
-    el.textContent    = text;
+    el.textContent      = text;
     el.style.fontSize   = fontSize + 'px';
     el.style.fontWeight = fontWeight;
-    el.style.left       = x + 'px';
-    el.style.top        = y + 'px';
+    el.style.left       = '0px';
+    el.style.top        = '0px';
     el.style.opacity    = '0';
     el.style.transform  = 'translate(0px, 0px)';
     el.style.transition = 'none';
-    el.style.display    = '';
+    el.style.display    = 'block';
+
+    var wordW = el.offsetWidth;
+    var wordH = el.offsetHeight;
+
+    /* -- Find a valid position + drift -------------------------- */
+    var pad   = CONFIG.edgePadding;
+    var valid = false;
+    var x, y, driftX, driftY;
+
+    // Refresh the dead zone each spawn (cheap getBoundingClientRect call)
+    updateDeadZone();
+
+    for (var attempt = 0; attempt < CONFIG.maxPlacementAttempts; attempt++) {
+      // Random drift direction
+      var angle = Math.random() * Math.PI * 2;
+      driftX = Math.cos(angle) * driftDist;
+      driftY = Math.sin(angle) * driftDist;
+
+      // Random start position (accounts for word size)
+      x = rand(pad, Math.max(pad + 1, vpWidth  - pad - wordW));
+      y = rand(pad, Math.max(pad + 1, vpHeight - pad - wordH));
+
+      // Start and end bounding rects
+      var startR = { left: x,          top: y,          right: x + wordW,          bottom: y + wordH };
+      var endR   = { left: x + driftX, top: y + driftY, right: x + driftX + wordW, bottom: y + driftY + wordH };
+
+      // Swept bounding box covers the entire linear drift path
+      var swept = {
+        left:   Math.min(startR.left,   endR.left),
+        top:    Math.min(startR.top,    endR.top),
+        right:  Math.max(startR.right,  endR.right),
+        bottom: Math.max(startR.bottom, endR.bottom)
+      };
+
+      // Reject if any part of the swept path goes outside the viewport
+      if (swept.left < 0 || swept.top < 0 ||
+          swept.right > vpWidth || swept.bottom > vpHeight) {
+        continue;
+      }
+
+      // Reject if the swept path overlaps the brain dead zone
+      if (deadZone && rectsOverlap(swept, deadZone)) {
+        continue;
+      }
+
+      valid = true;
+      break;
+    }
+
+    if (!valid) {
+      el.style.display = 'none';
+      return; // skip this spawn cycle
+    }
+
+    /* -- Apply validated position ------------------------------- */
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+
+    // Per-word opacity target
+    var targetOpacity = rand(0.25, CONFIG.maxOpacity);
 
     item.active = true;
     activeCount++;
@@ -132,7 +201,7 @@
     }, duration + 100);
   }
 
-  /* ── Lifecycle ──────────────────────────────────────────────────── */
+  /* -- Lifecycle --------------------------------------------------- */
   function startSpawning() {
     spawnWord();
     spawnTimer = setInterval(spawnWord, CONFIG.spawnIntervalMs);
@@ -164,6 +233,7 @@
     resizeTimer = setTimeout(function () {
       vpWidth  = window.innerWidth;
       vpHeight = window.innerHeight;
+      updateDeadZone();
     }, 200);
   }
 
@@ -174,12 +244,13 @@
     vpHeight = window.innerHeight;
 
     createPool();
+    updateDeadZone();
     startSpawning();
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('resize', handleResize);
   }
 
-  /* ── Entry point (respect prefers-reduced-motion) ───────────────── */
+  /* -- Entry point (respect prefers-reduced-motion) ---------------- */
   if (window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return;
