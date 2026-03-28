@@ -5,6 +5,8 @@
 
 ## 4
 - coffee
+- software engineering
+- solutions architecture
 
 ## 3
 - raye
@@ -17,6 +19,8 @@
 - vegemite scrolls
 - making bread
 - boardgames
+- skateboarding
+- warframe
 
 ## 1
 - leatherworking
@@ -37,3 +41,4 @@
 - chocolate
 - matcha
 - stargate
+- home theatre
